@@ -30,12 +30,12 @@ class Brand extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['intro'], 'string'],
+            [['intro','logo'], 'string'],
             [['status'], 'integer'],
             [['name'], 'string', 'max' => 50],
-            [['logo'], 'string', 'max' => 255],
             [['sort'], 'string', 'max' => 11],
         ];
+
     }
 
     /**
@@ -47,7 +47,7 @@ class Brand extends \yii\db\ActiveRecord
             'id' => 'ID',
             'name' => '名称',
             'intro' => '简介',
-            'logo' => 'LOGO图片',
+            'logo' => 'LOGO',
             'sort' => '排序',
             'status' => '状态',
         ];
