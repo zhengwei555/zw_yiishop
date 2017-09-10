@@ -40,6 +40,7 @@ AppAsset::register($this);
         ['label' => '商品列表', 'url' => ['/brand/index']],
         ['label' => '文章列表', 'url' => ['/article-category/index']],
         ['label' => '文章分类列表', 'url' => ['/article/index']],
+        ['label' => '商品列表', 'url' => ['/goods-category/index']],
     ];
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];

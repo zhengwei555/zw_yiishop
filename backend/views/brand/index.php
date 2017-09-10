@@ -8,8 +8,10 @@ sort	int(11)	排序
 status	int(2)	状态(-1删除 0隐藏 1正常)
  */
 ?>
-<a href="<?=\yii\helpers\Url::to(['brand/add'])?>"  class="btn btn-primary">添加品牌</a>
-<table class="table table-bordered table-responsive">
+<div>
+    <a href="<?=\yii\helpers\Url::to(['brand/add'])?>"  class="btn btn-default"><span class="glyphicon glyphicon-plus"></span></a>
+</div><br>
+    <table class="table table-bordered table-responsive table-hover">
     <tr>
         <th>ID</th>
         <th>名称</th>
@@ -27,7 +29,7 @@ status	int(2)	状态(-1删除 0隐藏 1正常)
             <td><img src="<?=$Brand->logo?>" style="width: 60px"></td>
             <td><?=$Brand->sort?></td>
             <td><?=$Brand->status?'显示':'隐藏'?></td>
-            <td><a href="<?=\yii\helpers\Url::to(['brand/edit','id'=>$Brand->id])?>" class="btn btn-primary">编辑品牌</a>
+            <td><a href="<?=\yii\helpers\Url::to(['brand/edit','id'=>$Brand->id])?>" class="btn btn-default"><span class="glyphicon glyphicon-pencil"></span></a>
                 <a href="javascript:; " class="btn btn-default del_btn"><span class="glyphicon glyphicon-trash"></span></a></td>
         </tr>
     <?php endforeach;?>

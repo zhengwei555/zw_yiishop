@@ -4,7 +4,6 @@ namespace backend\controllers;
 
 use backend\models\Brand;
 use yii\data\Pagination;
-use yii\web\UploadedFile;
 use flyok666\uploadifive\UploadAction;
 use flyok666\qiniu\Qiniu;
 

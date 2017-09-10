@@ -11,7 +11,7 @@ $form=\yii\bootstrap\ActiveForm::begin();
 echo $form->field($model,'name')->textInput();
 echo $form->field($model,'intro')->textarea(['rows'=>8]);
 //上传文件
-echo yii\bootstrap\Html::img($model->logo,['class'=>'img-cricle','style'=>'width:50px']);
+//echo yii\bootstrap\Html::img($model->logo,['class'=>'img-cricle','style'=>'width:50px;']);
 echo $form->field($model,'logo')->hiddenInput();
 
 //================================upload插件
@@ -49,7 +49,7 @@ EOF
         ),
     ]
 ]);
-echo \yii\bootstrap\Html::img($model->logo,['id'=>'img']);
+echo \yii\bootstrap\Html::img($model->logo,['id'=>'img','style'=>'width:400px;']);
 //============
 echo $form->field($model,'sort')->textInput();
 echo $form->field($model,'status',['inline'=>true])->radioList([0=>'隐藏',1=>'正常']);

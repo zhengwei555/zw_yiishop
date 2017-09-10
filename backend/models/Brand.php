@@ -19,6 +19,8 @@ class Brand extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
+
+    //返回数据表的名字
     public static function tableName()
     {
         return 'brand';
