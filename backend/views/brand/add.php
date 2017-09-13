@@ -50,6 +50,8 @@ EOF
     ]
 ]);
 echo \yii\bootstrap\Html::img($model->logo,['id'=>'img','style'=>'width:400px;']);
+
+
 //============
 echo $form->field($model,'sort')->textInput();
 echo $form->field($model,'status',['inline'=>true])->radioList([0=>'隐藏',1=>'正常']);
