@@ -6,13 +6,18 @@ use backend\models\Brand;
 use yii\data\Pagination;
 use flyok666\uploadifive\UploadAction;
 use flyok666\qiniu\Qiniu;
-
+use yii\filters\AccessControl;
 class BrandController extends \yii\web\Controller
 {
     public function actionIndex()
     {
+/*        $isGuest=\Yii::$app->user->isGuest;
+        // var_dump($isGuest);die;
+        if($isGuest) {
+            return $this->redirect(['admin/login']);
+            exit;
+        }*/
         //1获取所有的用户数据
-        $model = new Brand();
         //每页多少条,总条数
         //实例化分页工具条
         $pager = new Pagination([
@@ -161,4 +166,26 @@ class BrandController extends \yii\web\Controller
         $url = $qiniu->getLink($key);
         var_dump($url);
     }*/
+    //设置权限
+    public function behaviors()
+    {
+        return [
+            'acf'=>[
+                'class'=>AccessControl::className(),
+                'only'=>['index','delete','add','edit'],
+                'rules'=>[
+                    [
+                        'allow'=>true,
+                        'actions'=>['delete','add','edit'],
+                        'roles'=>['@'],
+                    ],
+                    [
+                        'allow'=>true,
+                        'actions'=>['index'],
+                        'roles'=>['?','@'],
+                    ],
+                ],
+            ],
+        ];
+    }
 }

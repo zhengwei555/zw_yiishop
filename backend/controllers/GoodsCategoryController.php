@@ -7,11 +7,18 @@ use backend\models\GoodsCategory;
 use yii\data\Pagination;
 use creocoder\nestedsets\NestedSetsBehavior;
 use yii\web\NotFoundHttpException;
-
+use yii\filters\AccessControl;
 class GoodsCategoryController extends \yii\web\Controller
 {
+
     public function actionIndex()
     {
+/*        $isGuest=\Yii::$app->user->isGuest;
+        // var_dump($isGuest);die;
+        if($isGuest) {
+            return $this->redirect(['admin/login']);
+            exit;
+        }*/
         //1获取所有的用户数据
         //$model = new GoodsCategory();
         //每页多少条,总条数
@@ -114,5 +121,27 @@ class GoodsCategoryController extends \yii\web\Controller
 
 
         return $this->redirect(['goods-category/index']);
+    }
+    //设置权限
+    public function behaviors()
+    {
+        return [
+            'acf'=>[
+                'class'=>AccessControl::className(),
+                'only'=>['index','delete','add','edit'],
+                'rules'=>[
+                    [
+                        'allow'=>true,
+                        'actions'=>['delete','add','edit'],
+                        'roles'=>['@'],
+                    ],
+                    [
+                        'allow'=>true,
+                        'actions'=>['index'],
+                        'roles'=>['?','@'],
+                    ],
+                ],
+            ],
+        ];
     }
 }

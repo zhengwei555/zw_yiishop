@@ -14,20 +14,39 @@ use flyok666\uploadifive\UploadAction;
 use flyok666\qiniu\Qiniu;
 use yii\web\NotFoundHttpException;
 use yii\web\Request;
-
+use yii\filters\AccessControl;
 class GoodsController extends \yii\web\Controller
 {
     public function actionIndex()
     {
-        $model=new GoodsSearchForm();
         $query = Goods::find();
-        //接收表单提交的查询参数
+        $model=new GoodsSearchForm();
         $model->search($query);
+/*        $keyname=\Yii::$app->request->get('keyname');
+        $keysn=\Yii::$app->request->get('keysn');
+        $minprice=\Yii::$app->request->get('minprice');
+        $maxprice=\Yii::$app->request->get('maxprice');
+        var_dump($keyname);die;
+        if($keyname){
+            $query->andWhere(['like','name',$keyname]);
+        }
+        if($keysn){
+            $query->andWhere(['like','sn',$keysn]);
+        }
+        if($minprice){
+            $query->andWhere(['<=','shop_price',$minprice]);
+        }
+        if($maxprice){
+            $query->andWhere(['>=','shop_price',$maxprice]);
+        }*/
+        //接收表单提交的查询参数
+
         $pager=new Pagination([
-            'totalCount'=>$query->where(['>', 'status', -1])->count(),
-            'defaultPageSize'=>2
+            'totalCount'=>$query->andWhere(['>', 'status', -1])->count(),
+            'defaultPageSize'=>2,
         ]);
-        $goods=$query->where(['>', 'status', -1])->limit($pager->limit)->offset($pager->offset)->orderBy('sort ASC')->all();
+      //  $model=$query->all();
+        $goods=$query->andWhere(['>', 'status', -1])->limit($pager->limit)->offset($pager->offset)->orderBy('sort ASC')->all();
         return $this->render('index',['goods'=>$goods,'pager'=>$pager,'model'=>$model]);
     }
 
@@ -101,7 +120,7 @@ class GoodsController extends \yii\web\Controller
             $model->status=-1;
             $model->save(false);
             return 'success';
-            return $this->redirect(['brand/index']);
+            return $this->redirect(['goods/index']);
         }else {
             return 'fail';
         }
@@ -201,5 +220,26 @@ class GoodsController extends \yii\web\Controller
             ],
         ];
     }
-
+    //设置权限
+    public function behaviors()
+    {
+        return [
+            'acf'=>[
+                'class'=>AccessControl::className(),
+                'only'=>['index','delete','add','edit'],
+                'rules'=>[
+                    [
+                        'allow'=>true,
+                        'actions'=>['delete','add','edit'],
+                        'roles'=>['@'],
+                    ],
+                    [
+                        'allow'=>true,
+                        'actions'=>['index'],
+                        'roles'=>['?','@'],
+                    ],
+                ],
+            ],
+        ];
+    }
 }
