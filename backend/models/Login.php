@@ -50,7 +50,7 @@ class Login extends Model{
                    }
             }else{
                 //密码不正确
-                $this->addError('password','密码不正确');
+                $this->addError('password','密码不正确!');
             }
         }else{
             //账号不存在

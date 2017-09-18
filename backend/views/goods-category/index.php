@@ -26,7 +26,7 @@ status	int(2)	状态(-1删除 0隐藏 1正常)
             <td><?=$goodscategory->parent_id?></td>
             <td><?=$goodscategory->intro?></td>
             <td><a href="<?=\yii\helpers\Url::to(['goods-category/edit','id'=>$goodscategory->id])?>" class="btn btn-default"><span class="glyphicon glyphicon-pencil"></span></a>
-                <a href="<?=\yii\helpers\Url::to(['goods-category/delete','id'=>$goodscategory->id])?>" class="btn btn-default"><span class="glyphicon glyphicon-trash"></span></a>
+                <a href="javascript:; " class="btn btn-default del_btn"><span class="glyphicon glyphicon-trash"></span></a>
             </td>
         </tr>
     <?php endforeach;?>
@@ -38,4 +38,29 @@ echo \yii\widgets\LinkPager::widget([
     //'nextPageLabel'=>'下一页',
     //  'prevPageLabel'=>'上一页',
 ]);
+
+/**
+ * @var $this \yii\web\View
+ */
+$del_url=\yii\helpers\Url::to(['goods-category/delete']);
+//注册Js代码
+$this->registerJs(new \yii\web\JsExpression(
+    <<<JS
+    $('.del_btn').click(function() {
+      if(confirm('确定要删除吗?')){
+          var tr=$(this).closest('tr');
+          var id=tr.attr('data_id');
+          $.post('{$del_url}',{id:id},function(data) {
+            if(data=='success'){
+                alert('删除成功!');
+                tr.hide('slow');
+            }else {
+                alert('删除失败');
+            }
+          });
+      }
+    })
+JS
+
+));
 ?>

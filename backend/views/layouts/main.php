@@ -35,18 +35,12 @@ AppAsset::register($this);
             'class' => 'navbar-inverse navbar-fixed-top',
         ],
     ]);
-    $menuItems = [
-        ['label' => 'Home', 'url' => ['/site/index']],
-        ['label' => '品牌管理', 'url' => ['/brand/index']],
-        ['label' => '文章列表', 'url' => ['/article-category/index']],
-        ['label' => '文章分类列表', 'url' => ['/article/index']],
-        ['label' => '商品分类', 'url' => ['/goods-category/index']],
-        ['label' => '商品表', 'url' => ['/goods/index']],
-        ['label' => '用户表', 'url' => ['/admin/index']],
-    ];
+
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => '登录', 'url' => ['/admin/login']];
     } else {
+        $menuItems=\backend\models\Munu::getMunus();
+        $menuItems[] = ['label' => '修改密码', 'url' => ['/admin/editpsd']];
         $menuItems[] = '<li>'
             . Html::beginForm(['/admin/logout'], 'post')
             . Html::submitButton(

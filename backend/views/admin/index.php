@@ -19,7 +19,7 @@
             <td><?=$admin->email?></td>
             <td><?=$admin->status?'启用':'禁用'?></td>
             <td><a href="<?=\yii\helpers\Url::to(['admin/edit','id'=>$admin->id])?>" class="btn btn-default"><span class="glyphicon glyphicon-pencil"></span></a>
-                <a href="javascript:; " class="btn btn-default del_btn"><span class="glyphicon glyphicon-trash"></span></a></td>
+               <a href="javascript:; " class="btn btn-default del_btn"><span class="glyphicon glyphicon-trash"></span></a></td>
         </tr>
     <?php endforeach;?>
 </table>

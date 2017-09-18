@@ -24,8 +24,7 @@ use yii\web\NotFoundHttpException;
 class Admin extends \yii\db\ActiveRecord implements IdentityInterface
 {
     public $password;
-    public $newpassword;
-    public $repassword;
+    public $roles;
 
     //定义环境变量
     const SCENARIO_ADD='add';
@@ -45,9 +44,12 @@ class Admin extends \yii\db\ActiveRecord implements IdentityInterface
             $this->created_at=time();
             $this->auth_key=Yii::$app->security->generateRandomString();
         }else{//修改
-            $this->password_hash = Yii::$app->security->generatePasswordHash($this->newpassword);
-            $this->auth_key = Yii::$app->security->generateRandomString();
             $this->updated_at = time();
+            //  var_dump($this->password);exit();
+            if($this->password) {
+                $this->password_hash = Yii::$app->security->generatePasswordHash($this->password);
+                $this->auth_key = Yii::$app->security->generateRandomString();
+            }
 
         }
 
@@ -63,7 +65,8 @@ class Admin extends \yii\db\ActiveRecord implements IdentityInterface
         return [
             [['username','status'], 'required'],
             ['password','required','on'=>self::SCENARIO_ADD],
-            [['password','newpassword','repassword'],'string'],
+            [['roles'],'safe'],
+            [['password'],'string'],
             [['status', 'created_at', 'updated_at', 'last_login_time'], 'integer'],
             [['username', 'password_hash', 'password_reset_token', 'email'], 'string', 'max' => 255],
             [['auth_key'], 'string', 'max' => 32],
@@ -84,8 +87,6 @@ class Admin extends \yii\db\ActiveRecord implements IdentityInterface
             'username' => '用户名',
             'auth_key' => 'Auth Key',
             'password' => '密码',
-            'newpassword' => '新密码',
-            'repassword' => '确认密码',
             'password_reset_token' => '验证密码',
             'email' => 'Email',
             'status' => 'Status',
@@ -93,9 +94,18 @@ class Admin extends \yii\db\ActiveRecord implements IdentityInterface
             'updated_at' => 'Updated At',
             'last_login_time' => '最后登录时间',
             'last_login_ip' => '最后登录ip',
+            'roles'=>'角色',
         ];
     }
 
+    public static function getRole(){
+        $roles=\Yii::$app->authManager->getRoles();
+        $item=[];
+        foreach ($roles as $role){
+            $item[$role->name]=$role->description;
+        }
+        return $item;
+    }
 
     /**
      * Finds an identity by the given ID.

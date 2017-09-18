@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\filters\RbacFilters;
 use backend\models\ArticleCategory;
 use backend\models\GoodsCategory;
 use yii\data\Pagination;
@@ -102,8 +103,9 @@ class GoodsCategoryController extends \yii\web\Controller
     }
 
     //删除
-    public function actionDelete($id)
+    public function actionDelete()
     {
+        $id=\Yii::$app->request->post('id');
         $model = GoodsCategory::findOne(['id' => $id]);
         $child = GoodsCategory::findOne(['parent_id' => $model->id]);
             //方法2
@@ -126,22 +128,10 @@ class GoodsCategoryController extends \yii\web\Controller
     public function behaviors()
     {
         return [
-            'acf'=>[
-                'class'=>AccessControl::className(),
-                'only'=>['index','delete','add','edit'],
-                'rules'=>[
-                    [
-                        'allow'=>true,
-                        'actions'=>['delete','add','edit'],
-                        'roles'=>['@'],
-                    ],
-                    [
-                        'allow'=>true,
-                        'actions'=>['index'],
-                        'roles'=>['?','@'],
-                    ],
-                ],
-            ],
+            'rbac'=>[
+                'class'=>RbacFilters::className(),
+                'except'=>['login','logout','error','captcha'],
+            ]
         ];
     }
 }

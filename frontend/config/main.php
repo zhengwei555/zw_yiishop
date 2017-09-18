@@ -40,6 +40,8 @@ return [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
+            //地址优化
+            'suffix'=>'',
             'rules' => [
             ],
         ],

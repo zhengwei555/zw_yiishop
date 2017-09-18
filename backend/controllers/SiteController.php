@@ -54,8 +54,8 @@ class SiteController extends Controller
                 'class' => 'yii\captcha\CaptchaAction',
                 'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
                 //设置验证码参数
-                'minLength'=>4,
-                'maxLength'=>4,
+                'minLength'=>3,
+                'maxLength'=>3,
             ],
         ];
     }
