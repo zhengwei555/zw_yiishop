@@ -2,6 +2,7 @@
 
 namespace backend\models;
 
+use frontend\models\Cart;
 use Yii;
 use creocoder\nestedsets\NestedSetsBehavior;
 use yii\helpers\ArrayHelper;
@@ -77,11 +78,7 @@ class Goods extends \yii\db\ActiveRecord
         return ArrayHelper::merge([$top],$goodsCategories);
     }
 
-/*        //商品和相册关系 1对多
-    public function getGalleries()
-    {
-        return $this->hasMany(GoodsGallery::className(),['goods_id'=>'id']);
-    }*/
+
 
 
 /*

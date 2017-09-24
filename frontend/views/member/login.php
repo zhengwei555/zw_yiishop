@@ -2,13 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-    <title>用户注册</title>
+    <title>登录商城</title>
     <link rel="stylesheet" href="/style/base.css" type="text/css">
     <link rel="stylesheet" href="/style/global.css" type="text/css">
     <link rel="stylesheet" href="/style/header.css" type="text/css">
     <link rel="stylesheet" href="/style/login.css" type="text/css">
     <link rel="stylesheet" href="/style/footer.css" type="text/css">
 </head>
+<style>
+    .error{color: red}
+</style>
 <body>
 <!-- 顶部导航 start -->
 <div class="topnav">
@@ -18,7 +21,7 @@
         </div>
         <div class="topnav_right fr">
             <ul>
-                <li>您好，欢迎来到京西！[<a href="login.html">登录</a>] [<a href="register.html">免费注册</a>] </li>
+                <li>您好，欢迎来到京西！[<a href="<?=\yii\helpers\Url::to(['member/login'])?>">登录</a>] [<a href="<?=\yii\helpers\Url::to(['member/register'])?>">免费注册</a>] </li>
                 <li class="line">|</li>
                 <li>我的订单</li>
                 <li class="line">|</li>
@@ -39,71 +42,65 @@
     </div>
 </div>
 <!-- 页面头部 end -->
-
+<script type="text/javascript" src="/js/jquery-1.8.3.min.js"></script>
+<script src="http://static.runoob.com/assets/jquery-validation-1.14.0/dist/jquery.validate.min.js"></script>
+<script src="http://static.runoob.com/assets/jquery-validation-1.14.0/dist/localization/messages_zh.js"></script>
 <!-- 登录主体部分start -->
-<div class="login w990 bc mt10 regist">
+<div class="login w990 bc mt10">
     <div class="login_hd">
-        <h2>用户注册</h2>
+        <h2>用户登录</h2>
         <b></b>
     </div>
     <div class="login_bd">
         <div class="login_form fl">
-            <form id="signupForm" action="" method="post">
+            <form action="<?=\yii\helpers\Url::to(['member/login'])?>" method="post" id="signupForm">
                 <ul>
                     <li>
                         <label for="">用户名：</label>
                         <input type="text" class="txt" name="username" />
-                        <p>3-20位字符，可由中文、字母、数字和下划线组成</p>
                     </li>
                     <li>
                         <label for="">密码：</label>
                         <input type="password" class="txt" name="password" />
-                        <p>6-20位字符，可使用字母、数字和符号的组合，不建议使用纯数字、纯字母、纯符号</p>
-                    </li>
-                    <li>
-                        <label for="">确认密码：</label>
-                        <input type="password" class="txt" name="password" />
-                        <p> <span>请再次输入密码</p>
-                    </li>
-                    <li>
-                        <label for="">邮箱：</label>
-                        <input type="text" class="txt" name="email" />
-                        <p>邮箱必须合法</p>
-                    </li>
-                    <li>
-                        <label for="">手机号码：</label>
-                        <input type="text" class="txt" value="" name="tel" id="tel" placeholder=""/>
-                    </li>
-                    <li>
-                        <label for="">验证码：</label>
-                        <input type="text" class="txt" value="" placeholder="请输入短信验证码" name="captcha" disabled="disabled" id="captcha"/> <input type="button" onclick="bindPhoneNum(this)" id="get_captcha" value="获取验证码" style="height: 25px;padding:3px 8px"/>
-
+                        <a href="">忘记密码?</a>
                     </li>
                     <li class="checkcode">
                         <label for="">验证码：</label>
                         <input type="text"  name="checkcode" />
                         <img id="captcha_img" alt="" />
-                        <span>看不清？<a href="Javascript:;" id="change_img">换一张</a></span>
-                    </li>
-
-                    <li>
-                        <label for="">&nbsp;</label>
-                        <input type="checkbox" class="chb" checked="checked" /> 我已阅读并同意《用户注册协议》
+                        <span>看不清？<a href="javascript:;" id="change_captcha">换一张</a></span>
                     </li>
                     <li>
                         <label for="">&nbsp;</label>
+                        <input type="checkbox" class="chb"  name="rember"/> 保存登录信息
+                    </li>
+                    <li>
+                        <label for="">&nbsp;</label>
+                        <input type="hidden" name="_csrf-frontend" value="<?=Yii::$app->request->csrfToken?>"/>
                         <input type="submit" value="" class="login_btn" />
                     </li>
                 </ul>
             </form>
 
-
+            <div class="coagent mt15">
+                <dl>
+                    <dt>使用合作网站登录商城：</dt>
+                    <dd class="qq"><a href=""><span></span>QQ</a></dd>
+                    <dd class="weibo"><a href=""><span></span>新浪微博</a></dd>
+                    <dd class="yi"><a href=""><span></span>网易</a></dd>
+                    <dd class="renren"><a href=""><span></span>人人</a></dd>
+                    <dd class="qihu"><a href=""><span></span>奇虎360</a></dd>
+                    <dd class=""><a href=""><span></span>百度</a></dd>
+                    <dd class="douban"><a href=""><span></span>豆瓣</a></dd>
+                </dl>
+            </div>
         </div>
 
-        <div class="mobile fl">
-            <h3>手机快速注册</h3>
-            <p>中国大陆手机用户，编辑短信 “<strong>XX</strong>”发送到：</p>
-            <p><strong>1069099988</strong></p>
+        <div class="guide fl">
+            <h3>还不是商城用户</h3>
+            <p>现在免费注册成为商城用户，便能立刻享受便宜又放心的购物乐趣，心动不如行动，赶紧加入吧!</p>
+
+            <a href="regist.html" class="reg_btn">免费注册 >></a>
         </div>
 
     </div>
@@ -137,54 +134,57 @@
     </p>
 </div>
 <!-- 底部版权 end -->
-<script type="text/javascript" src="/js/jquery-1.8.3.min.js"></script>
 <script type="text/javascript">
-    function bindPhoneNum(){
-        //启用输入框
-        $('#captcha').prop('disabled',false);
 
-        var time=30;
-        var interval = setInterval(function(){
-            time--;
-            if(time<=0){
-                clearInterval(interval);
-                var html = '获取验证码';
-                $('#get_captcha').prop('disabled',false);
-            } else{
-                var html = time + ' 秒后再次获取';
-                $('#get_captcha').prop('disabled',true);
-            }
-
-            $('#get_captcha').val(html);
-        },1000);
-    }
-
-/*    $().ready(function () {
-        $('#signupForm').validate({
+    $().ready(function() {
+        $("#signupForm").validate({
             rules: {
-                username:'required'
+                username: {
+                    required: true,//用户名
+                },
+                password:{
+                    required: true,
+                },
+                checkcode: "validateCaptcha"//验证验证码
             },
             messages: {
-                username:'请输入用户名'
-            }
-            errorElement:'span'
+                username: {
+                    required: "请输入用户名",
+                },
+                password: {
+                    required: "请输入密码",
+                },
+            },
+            errorElement:'span'//错误信息的标签
         });
-    });*/
+    });
+    var hash;
     //获取验证码
-    var captcha_url='<?=\yii\helpers\Url::to(['site/captcha'])?>';
-    //获取新验证码
-    var change_captcha=function () {
-        $.getJSON(captcha_url,{refresh:1},function (json) {
-            $('#captcha_img').attr('src',json.url);
-        })
-
+    var url = '<?=\yii\helpers\Url::to(['site/captcha'])?>';
+    var captcha = function(){
+        $.getJSON(url,{refresh:1},function(json){
+            $("#captcha_img").attr('src',json.url);
+            //获取hash
+            hash = json.hash1;
+        });
     }
-
-    change_captcha();
+    captcha();
     //切换验证码
-    $("#change_img").click(function () {
-        change_captcha();
-    })
+    $("#change_captcha").click(function(){
+        captcha();
+    });
+    //添加自定义规则
+    jQuery.validator.addMethod("validateCaptcha", function(value, element) {
+        var h ;
+
+
+        for (var i = value.length - 1, h = 0; i >= 0; --i) {
+            h += value.charCodeAt(i);
+        }
+
+        return this.optional(element) || (h == hash);
+    }, "验证码不正确");
 </script>
 </body>
 </html>
+
