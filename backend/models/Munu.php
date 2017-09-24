@@ -58,11 +58,13 @@ class Munu extends \yii\db\ActiveRecord
                 $items=[];
                 foreach ($children as $child){
                     //判断当前用户有没有权限
-                 //   if(Yii::$app->user->can($child->url)){
+                    if(Yii::$app->user->can($child->url)){
                         $items[]=['label' => $child->name, 'url'=>[$child->url]];
-              //      }
+                    }
                 }
-                $menuItems[]= ['label' => $munu->name, 'items'=>$items];
+                if(!empty($items)) {  //显示有权限的列表
+                    $menuItems[] = ['label' => $munu->name, 'items' => $items];
+                }
             }
             return $menuItems;
     }

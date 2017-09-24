@@ -224,7 +224,7 @@ class ShopController extends Controller
                 //接收数据
               //  $order->load($request->post());
                 $model=$request->post();
-              //  var_dump($model);die;
+               // var_dump($model);die;
                 $address=Address::findOne(['id'=>$model['address_id'],'member_id'=>$member_id]);
                 $order->member_id=$address->member_id;
                 $order->name=$address->name;
@@ -243,41 +243,51 @@ class ShopController extends Controller
                 $order->payment_name=$payments[$model['pay']][0];
                 $order->create_time=time();
 
+                $order->total = 0;//遍历购物车表里面的商品,累加计算,加上运费
+                $goods_id = Cart::find()->where(['member_id'=>$member_id])->all();
+                foreach ($goods_id as $value){  //遍历查询所有goods_id
+                  //  var_dump($value);die;
+                    $goods = Goods::findOne(['id'=>$value->goods_id]); //查询goods表中对应的数据
+                    $cats = Cart::findOne(['goods_id'=>$value->goods_id]); // 查询cart表中对应的数据
+                    $order->total += ($goods->shop_price)*($cats->amount);
+                }
+                $order->total += $order->delivery_price; //保存order表中total数据
+             //   var_dump($order->total);exit;
                 //计算价格
                 $shiwu=\Yii::$app->db->beginTransaction();//开启失误
                 try{
                     $order->save();
-
-                    //订单商品详情表
-                    foreach ($carts as $cart){
+                    foreach ($carts as $cart) {
                         //检查库存
-                        if($cart->amount>$cart->goods->stock){
+                        if ($cart->amount > $cart->goods->stock) {
                             //库存不足,无法下单
-                            throw new Exception($cart->goods->name.'库存不足,无法下单');
+                            throw new Exception($cart->goods->name . '库存不足,无法下单');
                         }
-                        $order_goods=new OrderGoods();
-                        $order_goods->order_id=$order->id;
-                        $order_goods->goods_id=$cart->goods_id;
-                        $order_goods->goods_name=$cart->goods->name;
-                        $order_goods->amount=$cart->amount;
-                        $order_goods->price=$cart->goods->shop_price;
-                        $order_goods->logo=$cart->goods->logo;
-                        $order_goods->total=1;
+                        $order_goods = new OrderGoods();
+                        $order_goods->order_id = $order->id;
+                        $order_goods->goods_id = $cart->goods_id;
+                        $order_goods->goods_name = $cart->goods->name;
+                        $order_goods->amount = $cart->amount;
+                        $order_goods->price = $cart->goods->shop_price;
+                        $order_goods->logo = $cart->goods->logo;
+                        $order_goods->total = $cart->amount * $cart->goods->shop_price;
                         //   var_dump($order_goods);die;
                         $order_goods->save();
                         //减库存
-                        $goods=Goods::findOne(['id'=>$cart->goods_id]);
-                        $goods->stock=$goods->stock-$cart->amount;
+                        $goods = Goods::findOne(['id' => $cart->goods_id]);
+                        $goods->stock = $goods->stock - $cart->amount;
                         $goods->save();
 
 
-
+                    }
                         //清除购物车
                         $cart->delete();
                         //提交事务
                         $shiwu->commit();
                         return $this->redirect(['shop/flow3']);
-                    }
+
+
+                    //订单商品详情表
                 }catch (Exception $e){
                     //回滚
                     $shiwu->rollBack();

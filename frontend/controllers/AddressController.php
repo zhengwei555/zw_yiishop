@@ -20,7 +20,7 @@ class AddressController extends \yii\web\Controller
                 if ($model->validate()) {
                     $model->member_id=$member_id;
                     $model->save();
-                    return $this->redirect(['shop/index']);
+                    return $this->redirect(['address/address']);
                 } else {
                     var_dump($model->getErrors());
                     exit;
@@ -66,7 +66,7 @@ class AddressController extends \yii\web\Controller
             if ($address) {
                 $address->delete();
                 //   return 'success';
-                return $this->redirect(['locations/address']);
+                return $this->redirect(['address/address']);
             }
         } else {
             throw new ForbiddenHttpException('您还没有登录,请登录!');

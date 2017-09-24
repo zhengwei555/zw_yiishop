@@ -183,6 +183,7 @@
                     $count=0; $count_price=0;
                    foreach ($carts as $key=>$cart) :
                         $count++;
+                        $count_price+=($cart->goods->shop_price)*($cart->amount);
                     ?>
                 <tr class="price" data-price="<?=$cart->goods->shop_price?>">
                     <td class="col1"><a href=""><img src="/images/cart_goods1.jpg" alt="" /></a>
@@ -199,7 +200,7 @@
                         <ul>
                             <li>
                                 <span><?=$count?> 件商品，总商品金额：</span>
-                                <em>￥5316.00</em>
+                                <em id='count' data-id="<?=$count_price?>"><?=$count_price?></em>
                             </li>
                             <li>
                                 <span>返现：</span>
@@ -209,9 +210,9 @@
                                 <span>运费：</span>
                                 <em>￥25.00</em>
                             </li>
-                            <li>
+                            <li id="count_yunfei">
                                 <span>应付总额：</span>
-                                <em>￥5076.00</em>
+                                <em>￥3000.00</em>
                             </li>
                         </ul>
                     </td>
@@ -225,7 +226,7 @@
 
     <div class="fillin_ft">
         <span><input type="submit" value="提交表单"/></span>
-        <p>应付总额：<strong>￥5076.00元</strong></p>
+        <p>应付总额：<strong id="count_zong">￥3000.00元</strong></p>
 
     </div>
 </div>
@@ -260,9 +261,13 @@
 <!-- 底部版权 end -->
 <script type="text/javascript">
     $("input[name='delivery']").click(function () {
-       // console.log(this);
         var price= $(this).closest('tr').attr('data-price');
+        var count=$('#count').attr('data-id');
+         var count_price=parseInt(price)+parseInt(count);
+        console.log(count_price);
         $('#yunfei em').text("￥"+price+'.00');
+        $('#count_yunfei em').text("￥"+count_price+'.00');
+        $('#count_zong').text("￥"+count_price+'.00');
     })
 </script>
 </body>
