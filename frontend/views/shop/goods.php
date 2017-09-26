@@ -565,8 +565,10 @@
             <!-- 图片预览区域 start -->
             <div class="preview fl">
                 <div class="midpic">
-                    <a href="/images/preview_l1.jpg" class="jqzoom" rel="gal1">   <!-- 第一幅图片的大图 class 和 rel属性不能更改 -->
-                        <img src="/images/preview_m1.jpg" alt="" />               <!-- 第一幅图片的中图 -->
+                    <?php foreach ($imgs as $img):?>
+                    <a href="<?='http://admin.yii2shop.com'.$img->path?>" class="jqzoom" rel="gal1">   <!-- 第一幅图片的大图 class 和 rel属性不能更改 -->
+                        <img src="<?='http://admin.yii2shop.com'.$img->path?>" alt="" />
+                        <?php endforeach;?><!-- 第一幅图片的中图 -->
                     </a>
                 </div>
 

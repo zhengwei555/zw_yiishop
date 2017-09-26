@@ -29,8 +29,13 @@ class AddressController extends \yii\web\Controller
              else {
                  throw new ForbiddenHttpException('您还没有登录,请登录!');
              }
+         }
+        if(!\Yii::$app->user->isGuest) {
+            $member_id=\Yii::$app->user->id;
+            $addressies = Address::find()->where(['member_id'=> $member_id])->all();
+        }else{
+            $addressies = [];
         }
-        $addressies = Address::find()->all();
         return $this->renderPartial('address', ['model' => $model, 'addressies' => $addressies]);
     }
 
@@ -38,24 +43,24 @@ class AddressController extends \yii\web\Controller
     {
         $model=Address::findOne(['id'=>$id]);
         $request = \Yii::$app->request;
-      //  var_dump($model);die;
         if ($request->isPost) {
+         //   var_dump($model);die;
             if (!\Yii::$app->user->isGuest) {
                 $model->load($request->post(), '');
                 if ($model->validate()) {
+
                     $model->save();
-                    return $this->redirect(['member/login']);
+                    return $this->redirect(['address/address']);
                 } else {
                     var_dump($model->getErrors());
                     exit;
                 }
             }else {
                 throw new ForbiddenHttpException('您还没有登录,请登录!');
-                die;
             }
         }
-        $addressies = Address::find()->all();
-        return $this->renderPartial('address', ['model' => $model, 'addressies' => $addressies]);
+
+        return $this->renderPartial('addressedit', ['model' => $model]);
     }
 
     //删除

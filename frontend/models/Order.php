@@ -48,6 +48,11 @@ class Order extends \yii\db\ActiveRecord
         return 'order';
     }
 
+    //商品和购物车关系 多对1
+    public function getOrdergoods()
+    {
+        return $this->hasOne(OrderGoods::className(),['order_id'=>'id']);
+    }
     /**
      * @inheritdoc
      */

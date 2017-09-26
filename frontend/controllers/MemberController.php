@@ -85,10 +85,27 @@ class MemberController extends \yii\web\Controller
 
     public function actionSms(){
         $phone=\Yii::$app->request->post('phone');
+        //判断是否能够发送短信
+        //一个手机号码1分钟只能发送一条短信
         $code=rand(1000,9999);
         $redis=new \Redis();
         $redis->connect('127.0.0.1');
-        $redis->set('code_'.$phone,$code);
+        $time=$redis->get('time_'.$phone);
+        if($time && (time()-$time<60)){
+            echo '不能频繁发送验证码';
+            exit;
+        }
+        $count=$redis->get('count_'.$phone);
+        if($count && $count>=20){
+            echo '今天发送次数超过20次,不能再发了!';
+        }
+
+        $redis->set('code_'.$phone,$code,time()+5*60);
+        //保存发送时间
+        $redis->set('time_'.$phone,time());
+        //保存发送次数
+        $redis->set('count_'.$phone,++$count);
+
 
 /*        $demo = new SmsDemo(
             "LTAIMQ3n1PtzHeCz",

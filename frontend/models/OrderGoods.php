@@ -38,6 +38,7 @@ class OrderGoods extends \yii\db\ActiveRecord
         ];
     }
 
+
     /**
      * @inheritdoc
      */

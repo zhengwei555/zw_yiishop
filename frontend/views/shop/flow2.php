@@ -77,7 +77,7 @@
             <?php foreach ($addressies as $address) :?>
             <div class="address_info">
                 <p>
-                    <input type="radio" value="<?=$address->id?>" name="address_id"/> <?=$address->name?>&nbsp;
+                    <input type="radio" value="<?=$address->id?>" checked="checked" name="address_id"/> <?=$address->name?>&nbsp;
                     <?=$address->tel?>&nbsp;<?=$address->province?>&nbsp;<?=$address->city?>&nbsp;
                     <?=$address->area?>&nbsp;<?=$address->area_tail?>&nbsp;
                 </p>
@@ -128,7 +128,7 @@
                 <table>
                     <?php foreach ($payments as $pay=>$payment) :?>
                     <tr class="cur">
-                        <td class="col1"><input type="radio" name="pay" value="<?=$pay?>"/><?=$payment[0]?></td>
+                        <td class="col1"><input type="radio" name="pay" checked="checked" value="<?=$pay?>"/><?=$payment[0]?></td>
                         <td class="col2"><?=$payment[1]?></td>
                     </tr>
                     <?php endforeach;?>
@@ -186,7 +186,7 @@
                         $count_price+=($cart->goods->shop_price)*($cart->amount);
                     ?>
                 <tr class="price" data-price="<?=$cart->goods->shop_price?>">
-                    <td class="col1"><a href=""><img src="/images/cart_goods1.jpg" alt="" /></a>
+                    <td class="col1"><a href=""><img src="<?=$cart->goods->logo?>" alt="" /></a>
                         <strong><a href=""><?=$cart->goods->name?></a></strong></td>
                     <td class="col3"><?=$cart->goods->shop_price?></td>
                     <td class="col4"><?=$cart->amount?></td>

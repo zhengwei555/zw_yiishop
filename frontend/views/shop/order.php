@@ -508,13 +508,12 @@
                 </tr>
                 </thead>
                 <tbody>
-                <?php foreach ($models as $model):?>
+                <?php foreach ($models as $k=>$model):?>
                 <tr>
                     <td><a href=""><?=$model->id?></a></td>
-                    <td><a href=""><img src="/images/order1.jpg" alt="" /></a></td>
-                    <!--<td><a href=""><img src="<?/*=$model->logo*/?>" alt="" /></a></td>-->
+                 <td><a href=""><img src="<?=$model->ordergoods->logo?>" alt="" /></a></td>
                     <td><?=$model->name?></td>
-                    <td>￥<?=$model->name?> <?=$model->payment_name?></td>
+                    <td>￥<?=$model->ordergoods->price?> <?=$model->payment_name?></td>
                     <td><?=date('Y-m-d h:i:s',$model->create_time)?></td>
                     <td>已取消</td>
                     <td><a href="">查看</a> | <a href="javascript:; " class="del_btn">删除</a></td>

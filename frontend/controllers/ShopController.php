@@ -44,7 +44,7 @@ class ShopController extends Controller
         }
         $pager = new Pagination([
             'totalCount' => $query->count(),
-            'defaultPageSize' => 2,
+            'defaultPageSize' => 4,
         ]);
 
         $lists = $query->limit($pager->limit)->offset($pager->offset)->all();
@@ -312,7 +312,10 @@ class ShopController extends Controller
     public function actionOrders(){
         $member_id=\Yii::$app->user->id;
         $models=Order::find()->where(['member_id'=>$member_id])->all();
-       // var_dump(1);die;
+        /*foreach ($models as $model){
+
+            var_dump($model->order_goods->logo);die;
+        }*/
         return $this->renderPartial('order',['models'=>$models]);
     }
 

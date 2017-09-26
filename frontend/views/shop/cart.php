@@ -97,7 +97,7 @@
             $count+=$good->shop_price*$carts[$good->id];
         ?>
         <tr data-id="<?=$good->id?>">
-            <td class="col1"><a href=""><img src="/images/cart_goods1.jpg" alt="" /></a>  <strong><a href=""><?=$good->name?></a></strong></td>
+            <td class="col1"><a href=""><img src="<?=$good->logo?>" alt="" /></a>  <strong><a href=""><?=$good->name?></a></strong></td>
             <td class="col3">￥<span><?=$good->shop_price?></span></td>
             <td class="col4">
                 <a href="javascript:;" class="reduce_num"></a>

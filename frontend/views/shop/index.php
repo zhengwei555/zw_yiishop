@@ -163,23 +163,6 @@
                     </div>
                 </div>
                 <?php endforeach;?>
-<!--                <div class="cat">
-                    <h3><a href="">家用电器</a><b></b></h3>
-                    <div class="cat_detail">
-                        <dl class="dl_1st">
-                            <dt><a href="">大家电</a></dt>
-                            <dd>
-                                <a href="">平板电视</a>
-                                <a href="">空调</a>
-                                <a href="">冰箱</a>
-                                <a href="">洗衣机</a>
-                                <a href="">热水器</a>
-                                <a href="">DVD</a>
-                                <a href="">烟机/灶具</a>
-                            </dd>
-                        </dl>
-                    </div>
-                </div>-->
             </div>
 
         </div>
