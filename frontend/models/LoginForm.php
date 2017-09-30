@@ -12,7 +12,7 @@ use yii\web\ForbiddenHttpException;
 class LoginForm extends Model{
     public $username;
     public $password;
-    public $checkcode;
+   // public $checkcode;
     public $rember;
 
     public function rules()
@@ -20,7 +20,7 @@ class LoginForm extends Model{
         return [
             [['username', 'password'], 'required'],
             ['rember','string'],
-            ['checkcode','captcha','message'=>'验证码错误']
+         //   ['checkcode','captcha','message'=>'验证码错误']
         ];
     }
     public function Login()
@@ -47,7 +47,6 @@ class LoginForm extends Model{
             throw new ForbiddenHttpException('用户名不存在');
             //账号不存在
           //  $this->addError('username','账号不正确');
-;
         }
         return false;
     }

@@ -56,8 +56,8 @@
         <div class="search fl">
             <div class="search_form">
                 <div class="form_left fl"></div>
-                <form action="" name="serarch" method="get" class="fl">
-                    <input type="text" class="txt" value="请输入商品关键字" /><input type="submit" class="btn" value="搜索" />
+                <form action="<?=\yii\helpers\Url::to(['shop/search'])?>" name="serarch" method="get" class="fl">
+                    <input type="text" class="txt" value="请输入商品关键字" name="keyword"/><input type="submit" class="btn" value="搜索" />
                 </form>
                 <div class="form_right fl"></div>
             </div>
@@ -68,7 +68,7 @@
                 <strong>热门搜索:</strong>
                 <a href="">D-Link无线路由</a>
                 <a href="">休闲男鞋</a>
-                <a href="">TCL空调</a>
+                <a href ="">TCL空调</a>
                 <a href="">耐克篮球鞋</a>
             </div>
         </div>
@@ -147,21 +147,21 @@
 
             <div class="cat_bd">
                 <?php foreach ($goods as $good1):?>
-                <div class="cat item1">
+                    <div class="cat item1">
                         <h3><a href="<?=\yii\helpers\Url::to(['shop/list','goods_id'=>$good1->id])?>"><?=$good1->name?></a> <b></b></h3>
-                    <div class="cat_detail">
-                        <?php foreach ($good1->children(1)->all() as $good2):?>
-                        <dl class="dl_1st">
-                            <dt><a href="<?=\yii\helpers\Url::to(['shop/list','goods_id'=>$good2->id])?>"><?=$good2->name?></dt>
-                                <dd>
-                                    <?php foreach ($good2->children()->all() as $good3):?>
-                                    <a href="<?=\yii\helpers\Url::to(['shop/list','goods_id'=>$good3->id])?>"><?=$good3->name?></a>
-                                    <?php endforeach;?>
-                                </dd>
-                        </dl>
-                        <?php endforeach;?>
+                        <div class="cat_detail">
+                            <?php foreach ($good1->children(1)->all() as $good2):?>
+                                <dl class="dl_1st">
+                                    <dt><a href="<?=\yii\helpers\Url::to(['shop/list','goods_id'=>$good2->id])?>"><?=$good2->name?></dt>
+                                    <dd>
+                                        <?php foreach ($good2->children()->all() as $good3):?>
+                                            <a href="<?=\yii\helpers\Url::to(['shop/list','goods_id'=>$good3->id])?>"><?=$good3->name?></a>
+                                        <?php endforeach;?>
+                                    </dd>
+                                </dl>
+                            <?php endforeach;?>
+                        </div>
                     </div>
-                </div>
                 <?php endforeach;?>
             </div>
 

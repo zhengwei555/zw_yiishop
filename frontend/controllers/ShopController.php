@@ -15,6 +15,7 @@ use frontend\models\Address;
 use frontend\models\Cart;
 use frontend\models\Order;
 use frontend\models\OrderGoods;
+use frontend\models\SphinxClient;
 use yii\data\Pagination;
 use yii\db\Exception;
 use yii\web\Controller;
@@ -26,10 +27,40 @@ class ShopController extends Controller
     public $enableCsrfValidation=false;
     public function actionIndex()
     {
-
         $goods = GoodsCategory::find()->where(['parent_id' => 0])->all();
         return $this->renderPartial('index', ['goods' => $goods]);
     }
+
+    //商品搜索
+    public function actionSearch($keyword){
+      //  var_dump($keyword);die;
+        $cl = new SphinxClient();
+        $cl->SetServer ( '127.0.0.1', 9312);//sphinx服务配置
+//$cl->SetServer ( '10.6.0.6', 9312);
+//$cl->SetServer ( '10.6.0.22', 9312);
+//$cl->SetServer ( '10.8.8.2', 9312);
+        $cl->SetConnectTimeout ( 10 );//超时时间
+        $cl->SetArrayResult ( true );//返回结果为数据
+// $cl->SetMatchMode ( SPH_MATCH_ANY);
+        $cl->SetMatchMode ( SPH_MATCH_EXTENDED2);//设置匹配模式,All为全部搜索,any为只要有一个满足就行
+        $cl->SetLimits(0, 1000);//限制
+       // $info = '华为手机';
+        $res = $cl->Query($keyword, 'goods');//shopstore_search
+//print_r($cl);
+     //   print_r($res);
+        $ids=[];
+        if(isset($res['matches'])){
+            //查询到
+            foreach ($res['matches'] as $match){
+                $ids[]=$match['id'];
+            }
+        }
+         $models=Goods::find()->where(['in','id',$ids])->all();
+       // echo '<pre>';n
+     //   var_dump($models);die;
+      ;
+    }
+
 
     public function actionList($goods_id)
     {
