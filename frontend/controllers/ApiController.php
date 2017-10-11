@@ -8,11 +8,16 @@
 
 namespace frontend\controllers;
 
+use backend\models\Article;
+use backend\models\ArticleCategory;
 use backend\models\Brand;
 use backend\models\GoodsCategory;
 use frontend\models\Address;
+use frontend\models\Cart;
 use frontend\models\LoginForm;
 use frontend\models\Member;
+use frontend\models\Order;
+use frontend\models\OrderGoods;
 use yii\web\Controller;
 use yii\web\Response;
 
@@ -318,5 +323,353 @@ class ApiController extends Controller
         $result['error'] = false;
         return $result;
         return $this->renderPartial('list', ['models' => $models]);
+    }
+
+    //获取文章分类
+    public function actionArticleCategoryAll(){
+        $result = [
+            'error' => true,
+            'msg' => '',//错误信息
+            'data' => [],//返回数据
+        ];
+        $ArticleCategorys = ArticleCategory::find()->all();
+        //  2  分配数据,调用视图
+        $result['error'] = false;
+        return $result;
+        return $this->render('index', ['ArticleCategorys' => $ArticleCategorys]);
+    }
+
+    //获取某分类下面的所有文章
+    public function actionArticleAll($id){
+        $result = [
+            'error' => true,
+            'msg' => '',//错误信息
+            'data' => [],//返回数据
+        ];
+        $Articles = Article::find()->where(['article_category_id'=>$id])->all();
+        //  2  分配数据,调用视图
+        $result['error'] = false;
+        return $result;
+        return $this->render('index', ['Articles' => $Articles]);
+    }
+
+    //-获取某文章所属分类
+    public function actionCategoryAll($id){
+        $result = [
+            'error' => true,
+            'msg' => '',//错误信息
+            'data' => [],//返回数据
+        ];
+        $article=Article::findOne(['id'=>$id]);
+        $ArticleCategory = ArticleCategory::findOne(['id'=>$article->article_category_id]);
+        //  2  分配数据,调用视图
+        $result['error'] = false;
+        return $result;
+        return $this->render('index', ['Article' => $Article]);
+    }
+
+    //-添加商品到购物车
+    public function actionAddcart($goods_id, $amount)
+    {
+        $result = [
+            'error' => true,
+            'msg' => '',//错误信息
+            'data' => [],//返回数据
+        ];
+        //未登录
+        if (\Yii::$app->user->isGuest) {
+            //存在cookie
+            $cookies = \Yii::$app->request->cookies;
+            $val = $cookies->getValue('carts');
+            if ($val) {
+                $carts = unserialize($val);
+            } else {
+                $carts = [];
+            }
+            //检查是否存在商品
+            if (array_key_exists($goods_id, $carts)) {
+                $carts[$goods_id] += $amount;
+            } else {
+                $carts[$goods_id] = intval($amount);
+            }
+            $cookies = \Yii::$app->response->cookies;
+            $cookie = new Cookie();
+            $cookie->name = 'carts';
+            $cookie->value = serialize($carts);
+            $cookie->expire = time() + 7 * 24 * 3600;//过期时间
+            $cookies->add($cookie);
+            $result['error'] = false;
+            // var_dump($goods_id);die;
+        } else {  //存数据库
+
+            //检查是否存在商品
+            $member_id=\Yii::$app->user->id;
+            $value=Cart::findOne(['goods_id'=>$goods_id,'member_id'=>$member_id]);
+            if ($value) {
+                $value->amount += $amount;
+                $value->save();
+                $result['error'] = false;
+            } else {
+                $model = new Cart();
+                $model->amount = $amount;
+                $model->goods_id=$goods_id;
+                $model->member_id=\Yii::$app->user->id;
+                $model->save();
+                $result['error'] = false;
+            }
+        }
+        return $result;
+        return $this->redirect(['shop/cart']);
+    }
+
+    //-修改购物车某商品数量
+    public function actionAjax(){
+        $result = [
+            'error' => true,
+            'msg' => '',//错误信息
+            'data' => [],//返回数据
+        ];
+        $request=\Yii::$app->request;
+        $goods_id=$request->post('goods_id');
+        $amount=$request->post('amount');
+        $member_id = \Yii::$app->user->id;
+        if(\Yii::$app->user->isGuest){
+            $cookies = \Yii::$app->request->cookies;
+            $value = $cookies->getValue('carts');
+            if($value){
+                $carts = unserialize($value);
+            }else{
+                $carts = [];
+            }
+            //检查是否存在商品
+            if(array_key_exists($goods_id,$carts)){
+                $carts[$goods_id] = $amount;
+            }
+            $cookies = \Yii::$app->response->cookies;
+            $cookie = new Cookie();
+            $cookie->name = 'carts';
+            $cookie->value = serialize($carts);
+            $cookie->expire = time()+7*24*3600;//过期时间
+            $cookies->add($cookie);
+            $result['error'] = false;
+        }else{//登录修改保存数据库
+            $cart=Cart::findOne(['goods_id'=>$goods_id,'member_id'=>$member_id]);
+            $cart->amount=$amount;
+            $cart->save();
+            $result['error'] = false;
+        }
+        return $result;
+    }
+
+    //-删除购物车某商品
+    public function actionDelete()
+    {
+        $result = [
+            'error' => true,
+            'msg' => '',//错误信息
+            'data' => [],//返回数据
+        ];
+        $id=\Yii::$app->request->post('goods_id');
+        $model = Cart::findOne(['goods_id' => $id]);
+        if($model) {
+            $model->delete();
+            return 'success';
+            $result['error'] = false;
+            return $this->redirect(['shop/cart']);
+        }
+        $result['error'] = false;
+        return $result;
+        return 'fail';
+    }
+
+    //清除购物车
+    public function actionclean()
+    {
+        $result = [
+            'error' => true,
+            'msg' => '',//错误信息
+            'data' => [],//返回数据
+        ];
+        $cart=Cart::find()->all();
+        $cart->delete();
+        $result['error'] = false;
+        return $result;
+        return $this->redirect(['shop/flow3']);
+    }
+
+    //获取购物车所有商品
+    public function actionCardAll(){
+        $result = [
+            'error' => true,
+            'msg' => '',//错误信息
+            'data' => [],//返回数据
+        ];
+        $carts = Cart::find()->all();
+        //  2  分配数据,调用视图
+        $result['error'] = false;
+        return $result;
+        return $this->render('index', ['carts' => $carts]);
+    }
+
+    //支付方式
+    public function actionZhifu($id){
+        $result = [
+            'error' => true,
+            'msg' => '',//错误信息
+            'data' => [],//返回数据
+        ];
+        $order = Order::findOne()->where(['id'=>$id]);
+        $payment=$order->payment_name;
+        //  2  分配数据,调用视图
+        $result['error'] = false;
+        return $result;
+        return $this->render('index', ['payment' => $payment]);
+    }
+
+    //送货方式
+    public function actionSonghuo($id){
+        $result = [
+            'error' => true,
+            'msg' => '',//错误信息
+            'data' => [],//返回数据
+        ];
+        $order = Order::findOne()->where(['id'=>$id]);
+        $delivery=$order->delivery_name;
+        //  2  分配数据,调用视图
+        $result['error'] = false;
+        return $result;
+        return $this->render('index', ['delivery' => $delivery]);
+    }
+
+    //提交订单
+    public function actionTijiao(){
+        if(!\Yii::$app->user->isGuest){//已登录
+            //1  显示订单表单
+            // var_dump($count);die;
+            $member_id=\Yii::$app->user->id;
+            $addressies=Address::find()->where(['member_id'=>$member_id])->all();
+            $carts=Cart::find()->where(['member_id'=>$member_id])->all();
+            $deliverys=order::$delivery;
+            $payments=order::$payment;
+
+            //2 提交表单
+            $request=\Yii::$app->request;
+            if($request->isPost){
+                $order=new Order();
+                //接收数据
+                //  $order->load($request->post());
+                $model=$request->post();
+                // var_dump($model);die;
+                $address=Address::findOne(['id'=>$model['address_id'],'member_id'=>$member_id]);
+                $order->member_id=$address->member_id;
+                $order->name=$address->name;
+                $order->province=$address->province;
+                $order->city=$address->city;
+                $order->tel=$address->tel;
+                $order->area=$address->area;
+                $order->address=$address->area_tail;
+
+                $order->delivery_id=$model['delivery'];
+                $order->delivery_name=$deliverys[$model['delivery']][0];
+                $order->delivery_price=$deliverys[$model['delivery']][1];
+
+                $order->payment_id=$model['pay'];
+                // var_dump($model['pay']);
+                $order->payment_name=$payments[$model['pay']][0];
+                $order->create_time=time();
+
+                $order->total = 0;//遍历购物车表里面的商品,累加计算,加上运费
+                $goods_id = Cart::find()->where(['member_id'=>$member_id])->all();
+                foreach ($goods_id as $value){  //遍历查询所有goods_id
+                    //  var_dump($value);die;
+                    $goods = Goods::findOne(['id'=>$value->goods_id]); //查询goods表中对应的数据
+                    $cats = Cart::findOne(['goods_id'=>$value->goods_id]); // 查询cart表中对应的数据
+                    $order->total += ($goods->shop_price)*($cats->amount);
+                }
+                $order->total += $order->delivery_price; //保存order表中total数据
+                //   var_dump($order->total);exit;
+                //计算价格
+                $shiwu=\Yii::$app->db->beginTransaction();//开启失误
+                try{
+                    $order->save();
+                    foreach ($carts as $cart) {
+                        //检查库存
+                        if ($cart->amount > $cart->goods->stock) {
+                            //库存不足,无法下单
+                            throw new Exception($cart->goods->name . '库存不足,无法下单');
+                        }
+                        $order_goods = new OrderGoods();
+                        $order_goods->order_id = $order->id;
+                        $order_goods->goods_id = $cart->goods_id;
+                        $order_goods->goods_name = $cart->goods->name;
+                        $order_goods->amount = $cart->amount;
+                        $order_goods->price = $cart->goods->shop_price;
+                        $order_goods->logo = $cart->goods->logo;
+                        $order_goods->total = $cart->amount * $cart->goods->shop_price;
+                        //   var_dump($order_goods);die;
+                        $order_goods->save();
+                        //减库存
+                        $goods = Goods::findOne(['id' => $cart->goods_id]);
+                        $goods->stock = $goods->stock - $cart->amount;
+                        $goods->save();
+
+
+                    }
+                    //清除购物车
+                    $cart->delete();
+                    //提交事务
+                    $shiwu->commit();
+                    return $this->redirect(['shop/flow3']);
+
+
+                    //订单商品详情表
+                }catch (Exception $e){
+                    //回滚
+                    $shiwu->rollBack();
+                }
+            }
+            return $this->renderPartial('flow2',['addressies'=>$addressies,'deliverys'=>$deliverys,
+                'payments'=>$payments,'carts'=>$carts]);
+        }
+
+        else{  //未登录,调到登录页面
+            return $this->redirect(['member/login']);
+        }
+    }
+
+    //获取当前用户订单列表
+    public function actionOrders(){
+        $result = [
+            'error' => true,
+            'msg' => '',//错误信息
+            'data' => [],//返回数据
+        ];
+        $member_id=\Yii::$app->user->id;
+        $models=Order::find()->where(['member_id'=>$member_id])->all();
+        $result['error'] = false;
+        return $result;
+        return $this->renderPartial('order',['models'=>$models]);
+    }
+
+    //取消订单
+    public function actionDeleteOrder()
+    {
+        $result = [
+            'error' => true,
+            'msg' => '',//错误信息
+            'data' => [],//返回数据
+        ];
+        $id=\Yii::$app->request->post('goods_id');
+        $model = OrderGoods::findOne(['goods_id' => $id]);
+        if($model) {
+            $model->delete();
+            return 'success';
+            $result['error'] = false;
+            return $result;
+            return $this->redirect(['shop/cart']);
+        }
+        $result['error'] = false;
+        return $result;
+        return 'fail';
     }
 }
